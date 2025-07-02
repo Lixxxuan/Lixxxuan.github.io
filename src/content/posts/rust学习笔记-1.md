@@ -1,5 +1,5 @@
 ---
-title: rust学习笔记-1
+title: rust学习笔记
 published: 2025-07-02
 description: 'rust学习笔记'
 image: ''
