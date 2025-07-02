@@ -1,5 +1,5 @@
 ---
-title: diary-1
+title: 游记
 published: 2025-03-14
 description: ''
 image: ''
