@@ -12,15 +12,14 @@ lang: ''
 &ensp;&ensp;做了一个长期学习Rust的计划，每天的学习都以博客的形式记录，同时也作为给自己查询的笔记。
 任何错误欢迎斧正,爱来自a@likaix.in  
 &ensp;&ensp;***7月3日内容修正***
-## Rust环境搭建（Linux）
+## Rust 环境搭建（Linux）
 ### 开发环境
 &ensp;&ensp;毋庸置疑，我选择`Visual Studio Code`作为我的开发环境（`code`）。如果是`Ubuntu`有图形化页面，进入软件商店搜code下载即可。如果没有就去[`Visual Studio Code`官网](https://code.visualstudio.com/)下载对应的deb包安装即可。
 
 ### 安装Rust编译工具
 &ensp;&ensp;Rust的编译工具依赖于C的编译工具，所以在linux下你首先可以安装GCC,在`Ubuntu`中使用`sudo apt install gcc`安装。安装后输入`g++ --version`出现相应版本号即表示安装成功。做完这些前置步骤，终端运行`curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`自动安装。下载完毕后会出现安装脚本页面，选择默认回车即可安装。**注意**在安装后一定要重启终端，否则通过`rustc -V`也不会正确输出版本号。只有重启终端后，输入`rustc -V`出现版本号即表示安装成功。
 
-
-## Rust基础学习
+## Rust 基础学习
 ### 输出命令行与创建项目
 &ensp;&ensp;`cargo new project-name`即可快速创建一个`Rust`项目，在`src`文件夹下找到对应的`main.rs`文件即可开始进行`hello world`。终端`cd`进入`src`文件夹，输入`rustc main.rs`会在`src`文件夹下生成`main可执行文件`,`./main`就会发现终端顺利的输输出了`hello world`。
 
@@ -29,7 +28,7 @@ fn main() {
     println!("hello world"); 
 }
 ```
-## Rust的基础语法
+## Rust 的基础语法
 &ensp;&ensp;Rust作为一直强类型语言，但是又同时具有上下文自动去推测变量类型的功能。默认情况下Rust声明的变量类型是不可变变量。除非使用`mut`关键字声明为可变变量。
 ```rust
 let a = 111; //不可变变量
@@ -100,7 +99,7 @@ let a = [1,2,3,4,5]
 
 ```
 
-### Rust数学运算
+### Rust 数学运算
 &ensp;&ensp;简单的加减乘除和其他语言基本上一致，但是`Rust`没有自加(++)和自减(--)运算。也就是说i++可能要写为`i=i+1`。
 
 ## Rust注释
@@ -119,7 +118,7 @@ let a = [1,2,3,4,5]
  /// 也是可以的
 ```
 
-## Rust函数
+## Rust 函数
 &ensp;&ensp;不是`function`也不用说明返回值,Rust函数的基本形式：
 ```rust
 fn <函数名> ( <参数> ) <函数体>
@@ -157,7 +156,7 @@ fn another_function(x: i32, y: i32) {
 ### 函数体的语句和表达式
 `Rust`函数体由一系列可以以表达式（Expression）结尾的语句（Statement）组成。到目前为止，我们仅见到了没有以表达式结尾的函数，但已经将表达式用作语句的一部分。
 
-语句是执行某些操作且没有返回值的步骤。
+&ensp;&ensp;语句是执行某些操作且没有返回值的步骤。
 
 ```rust
 let a = 6;
@@ -223,7 +222,7 @@ fn main() {
 
 ```
 
-## Rust条件语句
+## Rust 条件语句
 
 &ensp;&ensp;Rust中的条件语句如下所示：
 ```rust
@@ -249,7 +248,7 @@ fn main() {
 if <condition> { block 1 } else { block 2 } 
 ```
 
-## Rust循环
+## Rust 循环
 
 ### while 循环
 
@@ -276,7 +275,7 @@ while i < 10 {
 ```
 
 ### for 循环
-这里的.iter是迭代器，后文会详细说明
+&ensp;&ensp;这里的.iter是迭代器，后文会详细说明
 ```rust
 fn main() { 
     let a = [10, 20, 30, 40, 50]; 
@@ -285,7 +284,7 @@ fn main() {
     } 
 }
 ```
-也可以通过下标来访问数组
+&ensp;&ensp;也可以通过下标来访问数组
 ```rust
 fn main() { 
 let a = [10, 20, 30, 40, 50]; 
@@ -294,3 +293,37 @@ let a = [10, 20, 30, 40, 50];
     } 
 }
 ```
+
+### loop 循环
+
+&ensp;&ensp;`Rust`语言具有原生的无限循环结构loop：
+```rust
+fn main() { 
+    let s = ['1', '2', '3', '4', '5', '6']; 
+    let mut i = 0; 
+    loop { 
+        let ch = s[i]; 
+        if ch == 'O' { 
+            break; 
+        } 
+        println!("\'{}\'", ch);
+        i += 1; 
+    } 
+}
+```
+&ensp;&ensp;`Rust`支持使用`break i;`的样式，也就是说可以在结束循环的时候返回一个值，如下所示：
+```rust
+fn main() { 
+    let s = ['R', 'U', 'N', 'O', 'O', 'B']; 
+    let mut i = 0; 
+    let location = loop { 
+        let ch = s[i];
+        if ch == 'O' { 
+            break i; 
+        } 
+        i += 1; 
+    }; 
+    println!(" \'O\' 的索引为 {}", location); 
+}
+```
+&ensp;&ensp;当`loop`循环结束的时候返回了`i`的值，此时`location`就获得了`i`的值.
