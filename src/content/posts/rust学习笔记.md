@@ -192,13 +192,13 @@ fn main() {
 
 ### 函数返回值
 
-在参数声明之后用 -> 来声明函数返回值的类型（不是 : ）。在函数体中，随时都可以以 return 关键字结束函数运行并返回一个类型合适的值。
+&ensp;&ensp;在参数声明之后用 -> 来声明函数返回值的类型（不是 : ）。在函数体中，随时都可以以 return 关键字结束函数运行并返回一个类型合适的值。
 ```rust
 fn add(a: i32, b: i32) -> i32 {
     return a + b;
 }
 ```
-如果说没有声明返回值的类型，就不能使用`return`，同时函数表达式不能使用`return`。举个例子：
+&ensp;&ensp;如果说没有声明返回值的类型，就不能使用`return`，同时函数表达式不能使用`return`。举个例子：
 ```rust
 fn main() {
     let result = {
@@ -225,3 +225,72 @@ fn main() {
 
 ## Rust条件语句
 
+&ensp;&ensp;Rust中的条件语句如下所示：
+```rust
+fn main() {
+    let a = 1;
+    if a < 5 {
+        println!(1);
+    }
+    else
+    {
+        println!(2);
+    }
+}
+
+```
+&ensp;&ensp;和C语言相比有几点区别：
+ - 不需要用()去包裹条件语句`a<5`，但是也可以用()去包裹。
+ - 不存在单语句可以不用{}包裹的语法。
+ - 表达式必须是bool类型。
+  
+&ensp;&ensp;Rust中没有三元表达式，但是可以通过以下语句达成同样的效果：
+```rust
+if <condition> { block 1 } else { block 2 } 
+```
+
+## Rust循环
+
+### while 循环
+
+```rust
+fn main() {
+    let mut number = 1; 
+    while number != 4 { 
+        println!("{}", number); 
+        number += 1; 
+    } 
+    println!("EXIT"); 
+}
+```
+&ensp;&ensp;没有`do-while`的语法,但是`do`依旧作为保留字存在。
+
+&ensp;&ensp;`Rust`中不存在类似C语言中的，`for(int i = 1;i<n;i++)`使用三元语句控制循环。需要使用`while`循环
+
+```rust
+let mut i = 0; 
+while i < 10 { 
+    // 循环体 
+    i += 1; 
+}
+```
+
+### for 循环
+这里的.iter是迭代器，后文会详细说明
+```rust
+fn main() { 
+    let a = [10, 20, 30, 40, 50]; 
+    for i in a.iter() { 
+        println!("值为 : {}", i); 
+    } 
+}
+```
+也可以通过下标来访问数组
+```rust
+fn main() { 
+let a = [10, 20, 30, 40, 50]; 
+    for i in 0..5 { 
+        println!("a[{}] = {}", i, a[i]); 
+    } 
+}
+```
