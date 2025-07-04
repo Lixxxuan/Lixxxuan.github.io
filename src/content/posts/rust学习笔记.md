@@ -357,7 +357,19 @@ for x in iter { // 调用 next() 时才会实际计算
  - 不可变借用迭代器：`iter() → Iterator<Item = &T>`
  - 可变借用迭代器：`iter_mut() → Iterator<Item = &mut T>`
  - 所有权迭代器：`into_iter() → Iterator<Item = T>`（消费集合）
-  
+
+&ensp;&ensp;三种实例如下：
+```rust
+let vec = vec![1, 2, 3, 4, 5];
+let iter = vec.iter();
+
+let mut vec = vec![1, 2, 3, 4, 5];
+let iter_mut = vec.iter_mut();
+
+let vec = vec![1, 2, 3, 4, 5];
+let into_iter = vec.into_iter();
+```
+
 #### 无副作用（Side-Effect Free next()）
 &ensp;&ensp;next() 的逻辑应尽量纯粹，避免修改外部状态（除非是迭代器自身的必要状态）。
 反例：
@@ -398,11 +410,11 @@ let result = (1..5)
 &ensp;&ensp;零成本抽象：迭代器应编译为与手写循环相近的高效代码。短路操作：如 find/any 应在满足条件时立即停止迭代。
 
 #### 遵循 Iterator Trait 约定
-必须实现：
+&ensp;&ensp;必须实现：
 - `type Item`
 - `fn next(&mut self) ->Option<Self::Item>`
 
-一个良好设计的迭代器应该是这样的：
+&ensp;&ensp;一个良好设计的迭代器应该是这样的：
 ```rust
 // 良好设计的迭代器
 struct Countdown(u32);
@@ -429,6 +441,34 @@ impl Iterator for Countdown {
 fn main() {
     let countdown = Countdown(3);
     assert_eq!(countdown.collect::<Vec<_>>(), vec![3, 2, 1]);
+}
+
+```
+&ensp;&ensp;刚看到以上代码你可以会非常困惑，没事这是正常的。我先告诉你代码实现了一个倒计时功能,然后让我们来逐行解析一下：
+```rust
+struct Countdown(u32); // 这个结构体叫做元组结构体，里面只含有一个u32类型的整数。
+
+impl Iterator for Countdown {   // 使得这个元组结构体有迭代器的功能
+    type Item = u32; // 这个Item是一个关联类型，这相当于在trait中声明了一个"占位符类型"，具体实现时需要填充。
+    fn next(&mut self) -> Option<Self::Item> { // next是函数名，&mut self表示可变借用接收者，说明会修改迭代器的内部状态，-> Option<Self::Item> 说明返回一个Option枚举，并且这个类型和前面声明的 type Item 中声明的u32绑定。
+        if self.0 == 0 { // 这里的self和Python的self有异曲同工之处都表示"当前对象实例"的引用，作用是检查是否倒计时结束
+            None
+        } else {
+            let val = self.0; // 访问self中的第一个字段
+            self.0 -= 1; 
+            Some(val) //注意这边是一个表达式 说明整个函数的返回值之一就是这个Some(val)，Some是Rust标准库中Option枚举的一个变体，Some的作用是不返回裸的u32类型，而是返回一个Option枚举类型。
+        }
+    }
+
+    // 优化：覆盖默认的 size_hint
+    fn size_hint(&self) -> (usize, Option<usize>) {// size_hint 是 Rust 迭代器协议中的一个重要方法，它为迭代器消费者提供了关于剩余元素数量的提示信息，返回一个元组，上限是Option<usize>，表示剩余元素最多的数量。下限是usize类型，保证剩余的最少元素数量
+        (self.0 as usize, Some(self.0 as usize))
+    }
+}
+
+fn main() {
+    let countdown = Countdown(3);// 创建一个从三开始倒数的迭代器
+    assert_eq!(countdown.collect::<Vec<_>>(), vec![3, 2, 1]); // collect() 是迭代器的消费方法，将迭代结果收集到集合中，::<Vec<_>> 是 turbofish 语法，显式指定收集为 Vec 类型_ 让编译器推断 Vec 的元素类型（这里是 u32），_ 让编译器推断 Vec 的元素类型（这里是 u32）
 }
 
 ```
