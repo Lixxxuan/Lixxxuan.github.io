@@ -1,6 +1,6 @@
 ---
 title: rust学习笔记
-published: 2025-07-03
+published: 2025-07-04
 description: 'rust学习笔记'
 image: ''
 tags: [study]
@@ -11,7 +11,7 @@ lang: ''
 ### 说在前面
 &ensp;&ensp;做了一个长期学习Rust的计划，每天的学习都以博客的形式记录，同时也作为给自己查询的笔记。
 任何错误欢迎斧正,爱来自a@likaix.in  
-&ensp;&ensp;***7月3日内容修正***
+&ensp;&ensp;***7月4日内容补充修正***
 ## Rust 环境搭建（Linux）
 ### 开发环境
 &ensp;&ensp;毋庸置疑，我选择`Visual Studio Code`作为我的开发环境（`code`）。如果是`Ubuntu`有图形化页面，进入软件商店搜code下载即可。如果没有就去[`Visual Studio Code`官网](https://code.visualstudio.com/)下载对应的deb包安装即可。
