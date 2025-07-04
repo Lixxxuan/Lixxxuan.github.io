@@ -327,3 +327,108 @@ fn main() {
 }
 ```
 &ensp;&ensp;当`loop`循环结束的时候返回了`i`的值，此时`location`就获得了`i`的值.
+
+## Rust 迭代器
+
+&ensp;&ensp;Rust 中的迭代器（Iterator）是一个强大且灵活的工具，用于对集合(如数组、向量、链表等)进行逐步访问和操作。
+迭代器通过实现`Iterator trait`来定义。最基本的`trait`方法是`next`，用于逐一返回迭代器中的下一个元素。
+
+&ensp;&ensp;迭代器有这么几种原则：
+
+#### 惰性求值（Lazy Evaluation）
+&ensp;&ensp;迭代器不应预先计算所有值，而应在调用`next()`时按需生成。
+```rust
+let v = vec![1, 2, 3];
+let iter = v.iter().map(|x| {
+    println!("Processing {}", x);
+    x * 2
+}); // 此时不会执行 map 中的逻辑
+
+for x in iter { // 调用 next() 时才会实际计算
+    println!("Got {}", x);
+}
+
+```
+#### 线性消费（Linear Consumption）
+&ensp;&ensp;迭代器通常是一次性的，调用`next()`会消耗当前元素，无法回退或重置。某些迭代器(如 `std::iter::Rev`)可能支持双向遍历，但需明确实现 DoubleEndedIterator。
+
+#### 所有权清晰（Ownership Semantics）(后文会详细解释所有权)
+三种变体：
+ - 不可变借用迭代器：`iter() → Iterator<Item = &T>`
+ - 可变借用迭代器：`iter_mut() → Iterator<Item = &mut T>`
+ - 所有权迭代器：`into_iter() → Iterator<Item = T>`（消费集合）
+  
+#### 无副作用（Side-Effect Free next()）
+&ensp;&ensp;next() 的逻辑应尽量纯粹，避免修改外部状态（除非是迭代器自身的必要状态）。
+反例：
+```rust
+// 不良设计：next() 修改外部变量
+let mut count = 0;
+let bad_iter = std::iter::from_fn(|| {
+    count += 1; // 副作用！
+    Some(count)
+});
+
+```
+
+#### 终止性（Termination）
+&ensp;&ensp;迭代器必须能在有限次 next() 后返回 None（除非明确设计为无限迭代器）。
+&ensp;&ensp;无限迭代器需明确文档说明（如 std::iter::repeat）。
+示例：
+```rust
+// 有限迭代器
+let finite = (0..3).into_iter(); // 最终返回 None
+
+// 无限迭代器需配合 take 等适配器使用
+let infinite = std::iter::repeat(1).take(5);
+
+```
+#### 方法链式调用（Method Chaining）
+&ensp;&ensp;迭代器适配器（如 map/filter）应返回新的迭代器，而非修改原有迭代器。
+示例：
+```rust
+let result = (1..5)
+    .map(|x| x * 2)    // 返回新迭代器
+    .filter(|x| x > 3) // 再返回新迭代器
+    .collect::<Vec<_>>();
+
+```
+
+#### 性能保证（Performance Guarantees）
+&ensp;&ensp;零成本抽象：迭代器应编译为与手写循环相近的高效代码。短路操作：如 find/any 应在满足条件时立即停止迭代。
+
+#### 遵循 Iterator Trait 约定
+必须实现：
+- `type Item`
+- `fn next(&mut self) ->Option<Self::Item>`
+
+一个良好设计的迭代器应该是这样的：
+```rust
+// 良好设计的迭代器
+struct Countdown(u32);
+
+impl Iterator for Countdown {
+    type Item = u32;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.0 == 0 {
+            None
+        } else {
+            let val = self.0;
+            self.0 -= 1;
+            Some(val)
+        }
+    }
+
+    // 优化：覆盖默认的 size_hint
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        (self.0 as usize, Some(self.0 as usize))
+    }
+}
+
+fn main() {
+    let countdown = Countdown(3);
+    assert_eq!(countdown.collect::<Vec<_>>(), vec![3, 2, 1]);
+}
+
+```
